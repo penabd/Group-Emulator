@@ -101,7 +101,14 @@ inline int cycle(Machine &machine) {
                 id = machine.memoryArrays.size();
                 machine.memoryArrays.resize(id + 1);
             }
-            machine.memoryArrays[id] = std::vector<uint32_t>(machine.regs[c], 0);
+
+            auto &newArray = machine.memoryArrays[id];
+
+            if(newArray.capacity() < machine.regs[c]){
+                newArray = std::vector<uint32_t>(machine.regs[c], 0);
+            }else{
+                newArray.assign(machine.regs[c], 0);
+            }
             machine.regs[b] = id;
             break;
         }
