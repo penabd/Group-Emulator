@@ -41,19 +41,23 @@ struct Machine {
     std::vector<uint32_t> freeIds;
 };
 
+constexpr uint32_t extractBits(uint32_t expression, uint32_t shift, uint32_t mask){
+    return (expression >> shift) & mask;
+}
+
 inline int cycle(Machine &machine) {
     uint32_t instr = machine.memoryArrays[0][machine.pc++];
-    uint32_t op = instr >> OP_START;
+    uint32_t op = extractBits(instr, OP_START, 0xFFFFFFFF);
 
     if (op == 13) {
-        uint32_t a = (instr >> 25) & 7;
-        machine.regs[a] = instr & 0x1FFFFFF;
+        uint32_t a = extractBits(instr, 25, 7);
+        machine.regs[a] = extractBits(instr, 0, 0x1FFFFFF);
         return 0;
     }
 
-    uint32_t a = (instr >> A_START) & 7;
-    uint32_t b = (instr >> B_START) & 7;
-    uint32_t c = instr & 7;
+    uint32_t a = extractBits(instr, A_START, 7); 
+    uint32_t b = extractBits(instr, B_START, 7);
+    uint32_t c = extractBits(instr, 0, 7);
 
     switch (op) {
         case 0:{ 
